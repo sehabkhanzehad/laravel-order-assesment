@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->unsignedInteger('quantity');
             $table->decimal('unit_price', 10, 2);
-            $table->decimal('subtotal', 10, 2);
+            $table->decimal('sub_total', 10, 2);
 
             $table->timestamps();
 

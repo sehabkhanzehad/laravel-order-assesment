@@ -16,13 +16,13 @@ class OrderItem extends Model
         'product_sku',
         'quantity',
         'unit_price',
-        'subtotal',
+        'sub_total',
     ];
 
     protected $casts = [
         'quantity' => 'integer',
         'unit_price' => 'decimal:2',
-        'subtotal' => 'decimal:2',
+        'sub_total' => 'decimal:2',
     ];
 
     public function order(): BelongsTo

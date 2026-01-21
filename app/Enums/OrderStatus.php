@@ -8,4 +8,9 @@ enum OrderStatus: string
     case Processing = 'processing';
     case Completed = 'completed';
     case Cancelled = 'cancelled';
+
+    public static function values(): array
+    {
+        return array_column(static::cases(), 'value');
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -13,7 +14,7 @@ class OrderPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return in_array($user->role, [UserRole::Admin, UserRole::Manager, UserRole::Customer]);
     }
 
     /**
@@ -21,7 +22,9 @@ class OrderPolicy
      */
     public function view(User $user, Order $order): bool
     {
-        //
+        if ($user->isAdmin() || $user->isManager()) return true;
+
+        return $user->isCustomer() && $order->user_id === $user->id;
     }
 
     /**
@@ -29,7 +32,7 @@ class OrderPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->isAdmin() || $user->isCustomer();
     }
 
     /**
@@ -39,13 +42,17 @@ class OrderPolicy
     {
         //
     }
+    public function updateStatus(User $user, Order $order): bool
+    {
+        return $user->isAdmin() || $user->isManager();
+    }
 
     /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, Order $order): bool
     {
-        //
+        return $user->isAdmin();
     }
 
     /**

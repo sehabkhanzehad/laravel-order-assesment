@@ -14,8 +14,8 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'order_number',
         'status',
+        'total_amount',
     ];
 
     protected $casts = [
@@ -32,5 +32,37 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    // Helpers
+    public function isCancelled(): bool
+    {
+        return $this->status === OrderStatus::Cancelled;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === OrderStatus::Completed;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === OrderStatus::Pending;
+    }
+
+    public function isProcessing(): bool
+    {
+        return $this->status === OrderStatus::Processing;
+    }
+
+    public function canTransitionToStatus(OrderStatus $newStatus): bool
+    {
+        return match (true) {
+            $this->isCancelled() => false,
+            $this->isCompleted() => false,
+            $this->isPending() => in_array($newStatus, [OrderStatus::Processing, OrderStatus::Cancelled]),
+            $this->isProcessing() => in_array($newStatus, [OrderStatus::Completed, OrderStatus::Cancelled]),
+            default => false,
+        };
     }
 }

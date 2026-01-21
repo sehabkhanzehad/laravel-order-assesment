@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Orders;
 
+use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreOrderRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,11 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.product_name' => ['required', 'string', 'max:255'],
+            'items.*.product_sku' => ['nullable', 'string', 'max:100'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.unit_price' => ['required', 'numeric', 'min:0'],
         ];
     }
 }
