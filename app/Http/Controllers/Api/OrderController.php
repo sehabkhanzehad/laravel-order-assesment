@@ -56,4 +56,11 @@ class OrderController extends Controller
             return $this->error($e->getMessage(), 422);
         }
     }
+
+    public function destroy(Order $order, OrderService $service): JsonResponse
+    {
+        $service->deleteOrder($order);
+
+        return $this->success('Order deleted successfully.');
+    }
 }
