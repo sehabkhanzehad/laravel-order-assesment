@@ -41,3 +41,11 @@ Authenticated routes (use Sanctum tokens):
 - **Resources**: JSON API responses.
 - **Migrations**: Proper foreign keys, indexes.
 - **Seeders**: Sample users and orders.
+
+## Development Approach
+
+This project was developed by simulating an existing Laravel application workflow.
+
+- First, authentication and role-based access control (RBAC) were implemented on the main branch, assuming an existing production Laravel project.
+- Then, a separate feature branch was created to develop the Order Management module independently.
+- After completing and testing the Order module, the feature branch was merged back into the main branch.
