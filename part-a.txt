@@ -1,0 +1,66 @@
+A1. Eloquent Internals
+
+1. How Eloquent resolves relationships at runtime when accessing $post->comments
+
+    When accessing $post->comments:
+
+    - Eloquent uses PHP’s magic __get() method to handle this.
+    - First, it checks if `comments` is a normal attribute or accessor.
+    - If not found, it checks whether a `comments()` method exists in the Post model.
+    - Since the method exists, Eloquent treats it as a relationship and calls the `comments()` method, which usually returns a HasMany relationship.
+    - If the relationship data is not loaded yet, Eloquent runs a database query (lazy loading).
+    - After fetching the data, Eloquent stores it inside the model.
+    - If `$post->comments` is accessed again within the same request cycle, Eloquent returns the stored data instead of running the query again.
+
+2. When to avoid Eloquent relationships in production
+   
+    In some production cases, Eloquent relationships are avoided to keep the system fast and simple.
+
+    - When showing large lists of data, relationships can create many queries. Using joins is faster.
+    - In fast APIs, loading full related models is not always needed. Simple queries improve response time.
+    - For reports with count or total calculation, database queries work better than looping through relationships.
+    - In multi-tenant applications, relationships must be very careful. Writing direct queries helps avoid data mixing.
+    - When only a few fields are required, relationships load extra data. Joins give more control.
+    - In Laravel queue jobs, relationships can slow down job execution. Direct queries help jobs run faster and use less memory.
+    
+    In real projects, Eloquent relationships are fine for controllers, but in heavy queue jobs, optimized queries are preferred.   
+
+
+A2. Query Performance
+
+1.  This is the N+1 query problem. First, one query is executed to get all orders.
+    Then, for each order another query is executed to get the user. So if there are 100 orders, the total number of queries will be 101 (1 + 100).
+
+
+2. Two different fixes with trade-offs
+
+    Fix 1: Eager Loading
+
+    $orders = Order::with('user')->get();
+    $orders->map(fn ($order) => echo $order->user->name);
+
+    Now its load all order and user in advance.
+    Pros:
+    - Reduces the number of queries.
+    - Easy and clean to use.
+
+    Cons:
+    - Loads full user models.
+    - Uses more memory for large data sets.
+    
+
+    Fix 2: Join with Select
+
+    $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
+        ->select('orders.*', 'users.name as user_name')
+        ->get();
+    $orders->map(fn ($order) => echo $order->user_name);
+
+    This uses a single database query.
+    Pros:
+    - Faster for large lists.
+    - Loads only required fields.
+
+    Cons:
+    - Does not return user relationship objects.
+    - Less flexible than Eloquent relationships.

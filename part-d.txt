@@ -1,0 +1,27 @@
+D1. If the system scales to over 1 million orders, what would you optimize first and why?
+
+    - First, I would optimize the database indexing and queries.
+    - Use pagination don’t load too much data at once
+    - Avoid N+1 queries by using eager loading 
+    - Move heavy tasks to background jobs
+    - Keep API responses small by loading only necessary data
+    - Use caching
+
+
+D2. Which Laravel feature do developers misuse most and how do you avoid it?
+
+In my opinion common mistakes:
+
+- Writing too much business logic inside controllers
+- N+1 queries by careless lazy loading
+- Not follow separation of concerns
+- Not use jobs for heavy tasks
+- use directly env variables etc
+
+Avoid these by:
+
+- Follow MVC pattern and keep controllers thin
+- Use Eager loading when needed
+- Use service classes to separate business logic
+- Use jobs for heavy tasks
+- Use config files instead of env directly
