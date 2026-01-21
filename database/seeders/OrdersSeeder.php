@@ -18,7 +18,7 @@ class OrdersSeeder extends Seeder
         $customer = User::where('email', 'customer@example.com')->first();
 
         if (!$customer) return;
-        if (Order::forCurrentUser($customer)->exists()) return;
+        if (Order::ownedBy($customer)->exists()) return;
 
         $service = app(OrderService::class);
         $service->createOrder($customer, $this->getItems());

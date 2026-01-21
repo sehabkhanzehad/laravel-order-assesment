@@ -33,9 +33,10 @@ class OrderService
             }
 
             $order = $user->orders()->create([
-                'total_amount' => round($totalAmount, 2),
-                'status'       => OrderStatus::Pending,
+                'status' => OrderStatus::Pending,
             ]);
+            $order->total_amount = round($totalAmount, 2);
+            $order->save();
 
             $order->items()->createMany($orderItems);
 

@@ -16,7 +16,6 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'status',
-        'total_amount',
     ];
 
     protected $casts = [
@@ -75,7 +74,7 @@ class Order extends Model
         return $query->where('user_id', $user->id);
     }
 
-    public function scopeForCurrentUser(Builder $query, User $user): Builder
+    public function scopeOwnedBy(Builder $query, User $user): Builder
     {
         return $query->where('user_id', $user->id);
     }
