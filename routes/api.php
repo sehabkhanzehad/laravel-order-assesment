@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\OrderController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/api/auth.php';

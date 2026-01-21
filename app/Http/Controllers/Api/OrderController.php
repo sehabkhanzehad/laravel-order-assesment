@@ -12,14 +12,15 @@ use App\Enums\OrderStatus;
 use App\Exceptions\InvalidOrderStatusTransitionException;
 use App\Http\Resources\Api\OrderResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OrderController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
 
-        $orders = Order::query()->visibleTo($user)->with('items')->latest()->paginate(10);
+        $orders = Order::visibleTo($user)->with('items')->latest()->paginate(10);
 
         return OrderResource::collection($orders);
     }
